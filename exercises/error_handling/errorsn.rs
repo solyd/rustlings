@@ -17,19 +17,18 @@
 //
 // Execute `rustlings hint errorsn` for hints :)
 
-// I AM NOT DONE
-
 use std::error;
 use std::fmt;
 use std::io;
 
 // PositiveNonzeroInteger is a struct defined below the tests.
-fn read_and_validate(b: &mut dyn io::BufRead) -> Result<PositiveNonzeroInteger, ???> {
+fn read_and_validate(b: &mut dyn io::BufRead) -> Result<PositiveNonzeroInteger, Box<dyn error::Error>> {
     let mut line = String::new();
-    b.read_line(&mut line);
-    let num: i64 = line.trim().parse();
-    let answer = PositiveNonzeroInteger::new(num);
-    answer
+    b.read_line(&mut line)?;
+    let num: i64 = line.trim().parse()?;
+//    PositiveNonzeroInteger::new(num)
+    let answer = PositiveNonzeroInteger::new(num)?;
+    Ok(answer)
 }
 
 //
@@ -65,6 +64,7 @@ fn test_ioerror() {
     struct Broken;
     impl io::Read for Broken {
         fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
+            println!(">>> now in broken read");
             Err(io::Error::new(io::ErrorKind::BrokenPipe, "uh-oh!"))
         }
     }

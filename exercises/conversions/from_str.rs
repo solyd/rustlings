@@ -10,19 +10,29 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
 // Steps:
-// 1. If the length of the provided string is 0, then return an error
-// 2. Split the given string on the commas present in it
-// 3. Extract the first element from the split operation and use it as the name
-// 4. If the name is empty, then return an error
-// 5. Extract the other element from the split operation and parse it into a `usize` as the age
-//    with something like `"4".parse::<usize>()`.
-// If while parsing the age, something goes wrong, then return an error
-// Otherwise, then return a Result of a Person object
 impl FromStr for Person {
     type Err = String;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        let parts = s.split(",").collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            return Err("bad".to_string())
+        }
+
+        if parts[0].len() == 0 {
+            return Err("bad".to_string())
+
+        }
+
+        let age_parsed = parts[1].parse::<usize>();
+        if !age_parsed.is_ok() {
+            return Err("bad".to_string())
+        }
+
+        Ok(Person {
+            name: parts[0].to_string(),
+            age: age_parsed.unwrap()
+        })
     }
 }
 
